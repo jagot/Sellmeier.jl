@@ -9,7 +9,7 @@ import Base.writemime
 function writemime(io::IO, ::MIME"text/latex", m::Medium)
     print(io, "\$\$")
     print(io, "n^2 - 1 =")
-    print(io, join(["\\frac{$(m.B[i])\\lambda^2}{\\lambda^2 - $(m.C[i])}" for i = 1:length(m.B)], "+"))
+    print(io, join(["\\frac{$(m.B[i])\\lambda^2}{\\lambda^2 - $(m.C[i])~\\mathrm{\\mu m^2}}" for i = 1:length(m.B)], "+"))
     print(io, "\$\$")
 end
 
