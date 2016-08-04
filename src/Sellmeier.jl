@@ -1,5 +1,7 @@
 module Sellmeier
 
+using Calculus
+
 type Medium
     B::Vector
     C::Vector
@@ -34,6 +36,25 @@ maybe_complex(n) = any(n.<0) ? complex(n) : n
 n(m::Medium, lambda) = sqrt(maybe_complex(n2(m, lambda)))
 n_f(m::Medium, freq) = n(m, 299792458./freq)
 
-export Medium, BK7, SiO2, n2, n, n_f
+# Calculate dispersion through a medium of length d (in meters, may be
+# negative). Optionally, remove central frequency k-vector, to keep
+# pulse centered.
+function dispersion(m::Medium, d::Float64,
+                    freq, freq0 = 0)
+    n = real(n_f(m, freq))
+
+    k0 = 2pi*freq/299792458
+    k = n.*k0
+
+    if freq0 != 0
+        # Slope of dispersion relation at central frequency
+        dkdf = 2pi/299792458*derivative(f -> real(n_f(m, f))*f, freq0)
+        k -= dkdf.*freq
+    end
+
+    exp(im*k*d)
+end
+
+export Medium, BK7, SiO2, n2, n, n_f, dispersion
 
 end
