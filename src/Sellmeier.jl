@@ -18,11 +18,22 @@ BK7 = Medium([1.03961212, 0.231792344, 1.01046945],
 SiO2 = Medium([0.6961663, 0.4079426, 0.8974794],
               [0.0684043, 0.1162414, 9.896161].^2)
 
-n2(m::Medium, lambda) = 1.0 + reduce(+, zeros(lambda),
-                                     [m.B[i]*(lambda*1e6).^2./((lambda*1e6).^2-m.C[i])
-                                      for i = eachindex(m.B)])
-n(m::Medium, lambda) = sqrt(n2(m, lambda))
+function n2(m::Medium, lambda::Float64)
+    if !isfinite(lambda)
+        1.0
+    else
+        1.0 + reduce(+, 0,
+                     [m.B[i]*(lambda*1e6).^2./((lambda*1e6).^2-m.C[i])
+                      for i = eachindex(m.B)])
+    end
+end
+n2(m::Medium, lambda::Vector{Float64}) =
+    Vector{Float64}([n2(m, l) for l in lambda])
 
-export Medium, BK7, SiO2, n2, n
+maybe_complex(n) = any(n.<0) ? complex(n) : n
+n(m::Medium, lambda) = sqrt(maybe_complex(n2(m, lambda)))
+n_f(m::Medium, freq) = n(m, 299792458./freq)
+
+export Medium, BK7, SiO2, n2, n, n_f
 
 end
