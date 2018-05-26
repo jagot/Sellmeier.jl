@@ -12,3 +12,45 @@ Small library for the [[https://en.wikipedia.org/wiki/Sellmeier_equation][Sellme
 index of transparent media, as a function of wavelength.
 
 This is a [[https://github.com/jagot/LiterateOrg.jl][LiterateOrg.jl]] project. The documentation is found [[file:src/Sellmeier.org][within the code]].
+
+* Usage
+  It is very simple to calculate the refractive index of e.g. BK7
+  glass at a specific wavelength, or a specific frequency:
+  #+BEGIN_SRC julia :exports both :results verbatim
+    using Sellmeier
+    using Unitful
+
+    BK7(800u"nm"), BK7(2u"THz")
+  #+END_SRC
+
+  #+RESULTS:
+  : (1.5107762314198745, 1.812885348989345)
+
+  It is equally easy to evaluate the refractive index over a range of
+  wavelengths:
+  #+BEGIN_SRC julia :exports code
+    λ = linspace(200u"nm",2.5u"μm", 1000)
+    n = BK7.(λ)
+  #+END_SRC
+
+  #+RESULTS:
+
+  #+BEGIN_SRC julia :exports results :results file
+    using PyPlot
+    PyPlot.svg(true)
+
+    figure("BK7")
+    clf()
+    plot(λ./u"nm" .|> NoUnits, n)
+    xlabel(L"$\lambda$ [nm]")
+    ylabel(L"$n(\lambda)$")
+    title("BK7 dispersion")
+    tight_layout()
+    filename = "figures/bk7.svg"
+    mkpath(dirname(filename))
+    savefig(filename, transparent=true)
+    filename
+  #+END_SRC
+
+  #+RESULTS:
+  [[file:figures/bk7.svg]]
