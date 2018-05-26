@@ -80,22 +80,21 @@ a series of resonances:
 
     # Calculate dispersion through a medium of length d. Optionally,
     # remove central frequency k-vector, to keep pulse centered.
-    function dispersion(m::Medium, d::Length,
-                        f::Frequency, f₀::Frequency = 0u"Hz")
-        n = real(m(f))
+    function dispersion(m::Medium, d::Length, f::AbstractVector{F}, f₀::Frequency = 0u"Hz") where {F<:Frequency}
+        n = real(m.(f))
 
         # Wavevector in vacuum
-        k₀ = 2π*f/u"c"
+        k₀ = 2π*f./u"c"
         # Wavevector in the medium
-        k = n*k₀
+        k = n.*k₀
 
         if f₀ != 0u"Hz"
             # Slope of dispersion relation at central frequency
-            ∂k∂f = 2π/u"c"*derivative(f -> real(m(f))*f, f₀)
+            ∂k∂f = (2π/u"c")*derivative(f -> real(BK7(f*u"Hz"))*f, f₀/u"Hz" .|> NoUnits)
             k -= ∂k∂f*f
         end
 
-        exp(im*k*d)
+        exp.(im*k*d)
     end
   #+END_SRC
 

@@ -35,22 +35,98 @@ This is a [[https://github.com/jagot/LiterateOrg.jl][LiterateOrg.jl]] project. T
 
   #+RESULTS:
 
-  #+BEGIN_SRC julia :exports results :results file
+  #+BEGIN_SRC julia :exports none
     using PyPlot
     PyPlot.svg(true)
 
+    function savefig_f(filename)
+        mkpath(dirname(filename))
+        savefig(filename, transparent=true)
+        filename
+    end
+
+    no_units(x::Quantity, u) = x/u |> NoUnits
+  #+END_SRC
+
+  #+RESULTS:
+  : no_units (generic function with 1 method)
+
+  #+BEGIN_SRC julia :exports results :results file
     figure("BK7")
     clf()
-    plot(λ./u"nm" .|> NoUnits, n)
+    plot(no_units.(λ, u"nm"), n)
     xlabel(L"$\lambda$ [nm]")
     ylabel(L"$n(\lambda)$")
     title("BK7 dispersion")
     tight_layout()
-    filename = "figures/bk7.svg"
-    mkpath(dirname(filename))
-    savefig(filename, transparent=true)
-    filename
+    savefig_f("figures/bk7.svg")
   #+END_SRC
 
   #+RESULTS:
   [[file:figures/bk7.svg]]
+
+** Dispersion through glass
+   #+BEGIN_SRC julia :exports code
+     λ = 500.0u"nm"
+     f₀ = u"c"/λ |> u"THz"
+     ω₀ = 2π*f₀
+     τ = 6.2u"fs" # Pulse duration, intensity FWHM
+     γ = τ^2/8log(2)
+
+     f = linspace(0,30,2000)*f₀
+     ω = 2π*f
+
+     Ê = exp.(-(ω-ω₀).^2*γ)
+     # We propagate the pulse through 200 μm of BK7. We also remove
+     # dispersion at the central frequency, to keep the pulse centred in
+     # the time window.
+     Ê′ = Ê.*dispersion(BK7, 200u"μm", f, f₀)
+   #+END_SRC
+
+   #+RESULTS:
+
+   #+BEGIN_SRC julia :exports results :results file
+     time_domain(spectrum) = real(fftshift(ifft(spectrum)*√(length(spectrum))))
+
+     E = time_domain(Ê)
+     E′ = time_domain(Ê′)
+     using DSP
+
+     t = fftshift(fftfreq(length(f), ustrip(1.0/(f[2]-f[1]) .|> u"s")))*u"s"
+
+     t_ax = no_units.(t, u"fs")
+     f_ax = no_units.(ω, (2π*u"THz"))
+     sel = f_ax .< 2500
+
+     figure("pulse")
+     clf()
+     subplot(311)
+     plot(t_ax, E)
+     plot(t_ax, E′)
+     xlabel(L"$t$ [fs]")
+     ylabel(L"$E(t)$ [arb.u.]")
+     gca()[:xaxis][:tick_top]()
+     gca()[:xaxis][:set_label_position]("top")
+     margins(0,0.1)
+     subplot(312)
+     plot(f_ax[sel], abs2.(Ê[sel]))
+     plot(f_ax[sel], abs2.(Ê′[sel]))
+     ylabel(L"$|\hat{E}(f)|^2$ [arb.u.]")
+     margins(0,0.1)
+     ax = gca()[:twinx]()
+     ax[:plot](f_ax[sel], BK7.(f)[sel], "k--")
+     ylabel(L"n(f)")
+     margins(0,0.1)
+     gca()[:set_xticklabels]([])
+     subplot(313)
+     plot(f_ax[sel], unwrap(angle.(Ê[sel])))
+     plot(f_ax[sel], unwrap(angle.(Ê′[sel])))
+     xlabel(L"$f$ [THz]")
+     ylabel(L"$\arg\{\hat{E}(f)\}$ [rad]")
+     margins(0,0.1)
+     tight_layout()
+     savefig_f("figures/dispersed-pulse.svg")
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:figures/dispersed-pulse.svg]]
