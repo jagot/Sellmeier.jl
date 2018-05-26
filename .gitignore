@@ -4,3 +4,6 @@
 *~
 .ipynb_checkpoints
 ltximg/
+/deps/bootstrap.jl
+/src/literate_org_tangled_code.jl
+/test/literate_org_tangled_tests.jl
