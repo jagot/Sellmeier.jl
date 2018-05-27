@@ -52,6 +52,14 @@ a series of resonances:
    #+RESULTS:
    : Medium([0.696166, 0.407943, 0.897479], [0.00467914825849 μm^2, 0.013512063073959999 μm^2, 97.93400253792099 μm^2])
 
+** TEST String representation
+   #+BEGIN_SRC julia
+     Bstr = string(BK7.B)
+     Cstr = join(string.(BK7.C), ", ")
+     @test string(BK7) == "Medium($(Bstr), [$(Cstr)])"
+   #+END_SRC
+
+
 * Refractive index
   #+BEGIN_SRC julia
     function n²(m::Medium, λ::Length)
@@ -79,6 +87,7 @@ a series of resonances:
      using Unitful
 
      @test BK7(0.5876u"μm") ≈ 1.5168 atol=1e-3
+     @test SiO2(0.5876u"μm") ≈ 1.4585 atol=1e-3
    #+END_SRC
 
 * Dispersion

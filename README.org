@@ -29,8 +29,8 @@ This is a [[https://github.com/jagot/LiterateOrg.jl][LiterateOrg.jl]] project. T
   It is equally easy to evaluate the refractive index over a range of
   wavelengths:
   #+BEGIN_SRC julia :exports code
-    λ = linspace(200u"nm",2.5u"μm", 1000)
-    n = BK7.(λ)
+    λ = linspace(200u"nm",6.0u"μm", 1000)
+    n = [BK7.(λ) SiO2.(λ)]
   #+END_SRC
 
   #+RESULTS:
@@ -52,18 +52,19 @@ This is a [[https://github.com/jagot/LiterateOrg.jl][LiterateOrg.jl]] project. T
   : no_units (generic function with 1 method)
 
   #+BEGIN_SRC julia :exports results :results file
-    figure("BK7")
+    figure("BK7 & SiO2")
     clf()
     plot(no_units.(λ, u"nm"), n)
     xlabel(L"$\lambda$ [nm]")
     ylabel(L"$n(\lambda)$")
-    title("BK7 dispersion")
+    legend(["BK7", L"SiO$_2$"])
+    title("Refractive index")
     tight_layout()
-    savefig_f("figures/bk7.svg")
+    savefig_f("figures/refractive-index.svg")
   #+END_SRC
 
   #+RESULTS:
-  [[file:figures/bk7.svg]]
+  [[file:figures/refractive-index.svg]]
 
 ** Dispersion through glass
    #+BEGIN_SRC julia :exports code
