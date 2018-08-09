@@ -15,6 +15,7 @@ a series of resonances:
     using Unitful
     import Unitful: Length, Area, Frequency
     import Base: show
+    using Printf
 
     struct Medium{T<:Real,A<:Area{T}}
         B::Vector{T}
