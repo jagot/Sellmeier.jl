@@ -60,16 +60,14 @@ a series of resonances:
      @test string(BK7) == "Medium($(Bstr), [$(Cstr)])"
    #+END_SRC
 
-
 * Refractive index
   #+BEGIN_SRC julia
     function n²(m::Medium, λ::Length)
         if !isfinite(λ)
             1.0
         else
-            1.0 + reduce(+, 0,
-                         [Bᵢ*λ^2/(λ^2-Cᵢ)
-                          for (Bᵢ,Cᵢ) ∈ zip(m.B, m.C)]) |> NoUnits
+            1.0 + sum([Bᵢ*λ^2/(λ^2-Cᵢ)
+                       for (Bᵢ,Cᵢ) ∈ zip(m.B, m.C)]) |> NoUnits
         end
     end
 
@@ -127,19 +125,21 @@ a series of resonances:
      τ = 6.2u"fs" # Pulse duration, intensity FWHM
      γ = τ^2/8log(2)
 
-     f = linspace(0,30,2000)*f₀
+     f = range(0,stop=30,length=2000)*f₀
      ω = 2π*f
 
-     Ê = exp.(-(ω-ω₀).^2*γ)
+     Ê = exp.(-(ω .- ω₀).^2*γ)
      Ê′ = Ê.*dispersion(BK7, 6u"μm", f)
      Ê′′ = Ê.*dispersion(BK7, -6u"μm", f)
      Ê′′′ = Ê.*dispersion(BK7, -6u"μm", f, f₀)
 
+     using FFTW
+
      time_domain_envelope(spectrum) = abs.(fftshift(ifft(spectrum)*√(length(spectrum))))
 
-     @test indmax(time_domain_envelope(Ê′)) > indmax(time_domain_envelope(Ê))
-     @test indmax(time_domain_envelope(Ê′′)) < indmax(time_domain_envelope(Ê))
-     @test indmax(time_domain_envelope(Ê′′′)) == indmax(time_domain_envelope(Ê))
+     @test argmax(time_domain_envelope(Ê′)) > argmax(time_domain_envelope(Ê))
+     @test argmax(time_domain_envelope(Ê′′)) < argmax(time_domain_envelope(Ê))
+     @test argmax(time_domain_envelope(Ê′′′)) == argmax(time_domain_envelope(Ê))
    #+END_SRC
 
 * Exports

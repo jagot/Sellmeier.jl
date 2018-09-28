@@ -1,5 +1,5 @@
 using Sellmeier
-using Base.Test
+using Test
 
 const testfile = joinpath(dirname(@__FILE__), "literate_org_tangled_tests.jl")
 if isfile(testfile)
