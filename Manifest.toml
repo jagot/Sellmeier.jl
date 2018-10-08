@@ -9,9 +9,9 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[BinaryProvider]]
 deps = ["Libdl", "Pkg", "SHA", "Test"]
-git-tree-sha1 = "48c147e63431adbcee69bc40b04c3f0fec0a4982"
+git-tree-sha1 = "38be61810f280c3c478f5c38aaf387f8f9199275"
 uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
-version = "0.5.0"
+version = "0.5.1"
 
 [[Calculus]]
 deps = ["Compat"]
@@ -70,11 +70,9 @@ deps = ["Libdl"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[LiterateOrg]]
-deps = ["Dates", "Printf", "Test"]
-git-tree-sha1 = "20438ac331d5d054abaa70585908504f0bba4d0a"
-repo-rev = "master"
-repo-url = "git@github.com:jagot/LiterateOrg.jl.git"
-uuid = "93c33440-6125-11e8-0ffd-df540d4e821e"
+deps = ["Dates", "Pkg", "Printf", "Test"]
+git-tree-sha1 = "c380c181a4be762f4033c4bce87637eaac6b523d"
+uuid = "a7ef59f1-ab8a-5612-8cbe-0c3d3c126043"
 version = "0.1.0"
 
 [[Logging]]
@@ -143,9 +141,9 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
 [[Unitful]]
 deps = ["LinearAlgebra", "Random", "Test", "Unicode"]
-git-tree-sha1 = "6cb0003ad527c476cb48848d2cf205d2bdc8a84e"
+git-tree-sha1 = "cef7da6d4e9735fae7c11cd28e77b76fd87db468"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "0.11.0"
+version = "0.12.0"
 
 [[VersionParsing]]
 deps = ["Compat"]

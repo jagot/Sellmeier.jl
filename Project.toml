@@ -6,7 +6,7 @@ version = "0.1.0"
 [deps]
 Calculus = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
-LiterateOrg = "93c33440-6125-11e8-0ffd-df540d4e821e"
+LiterateOrg = "a7ef59f1-ab8a-5612-8cbe-0c3d3c126043"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
